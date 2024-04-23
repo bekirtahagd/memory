@@ -83,13 +83,14 @@ h6 {
 /* Memory Card Wrapper */
 #memory-card__wrapper {
   min-width: 2vw;
+  max-width: 60vw;
   width: auto;
   height: auto;
 
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center;
   gap: 2%;
 }
 
@@ -104,6 +105,9 @@ h6 {
   display: grid;
   grid-template-columns: 1fr;
   margin-bottom: 2%;
+}
+.memory-card > * {
+  pointer-events: none;
 }
 .card__item-wrapper {
   grid-row-start: 1;
@@ -130,10 +134,15 @@ h6 {
     rgba(63, 94, 251, 1) 0%,
     rgba(252, 70, 107, 1) 100%
   );
+
+  transition: visibility .25s, opacity .25s ease-in;
 }
-.card__cover:hover {
-  display: none;
+.memory-card[data-state="hidden"] > .card__cover{
+  visibility: visible;
+  opacity: 1;
 }
-.card__cover:not(:hover) {
-  display: border-box;
+.memory-card[data-state="open"] > .card__cover {
+  visibility: hidden;
+  opacity: 0;
 }
+
