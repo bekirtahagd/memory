@@ -1,30 +1,63 @@
 //References
-let cards = document.querySelectorAll(".memory-card");
+let cards = [];
+let inputCards = document.querySelector("#input-number");
+let buttonShuffle = document.querySelector("#box__button");
+let cardsWrapper = document.querySelector("#memory-card__wrapper");
  
 //Data
-let amountSelectable = 2;
+let amountOfCards;
+let amountSelectable;
 let selectedCards = [];
-let icons = ["😀", "😍", "😙", "😝", "😡", "🦇"];
+let iconTemplate = ["😀", "😍", "😙", "😝", "😡", "🦇"] //This needs to be dynamically imported from an api so we dont have to use amount dividable by 6
+let icons;
  
 //Constants
 const fadeDelay = 1000;
  
+//Visual Data
+let cardTemplate = cardsWrapper.innerHTML;
+
 // Event Listeners
-addEventListener("click", (event) => changeCardState(event));
+buttonShuffle.addEventListener("click", generateCards);
  
  
- 
-//Beginning
-createIconList();
-shuffleCards();
- 
+//Generate Cards
+function generateCards(){
+    amountOfCards = inputCards.value; //Input needs to be dividable by 6
+   
+    createIconList();
+
+    let parent = cardsWrapper;
+    parent.innerHTML = cardTemplate;
+
+    let template = cardsWrapper.querySelector(".memory-card");
+    template.addEventListener("click", (event) => changeCardState(event));
+    template.dataset.state = "hidden";
+    cards.push(template);
+
+
+    for(let i = 0; i < amountOfCards - 1; i++) {
+        let newElement = document.createElement("div");
+        newElement.classList.add("memory-card");
+        newElement.dataset.state = "hidden";
+        newElement.innerHTML = template.innerHTML;
+
+        parent.appendChild(newElement);
+
+        newElement.addEventListener("click", (event) => changeCardState(event));
+        cards.push(newElement);
+    }
+
+    shuffleCards();
+}
  
  
 function createIconList() {
+    amountSelectable = amountOfCards / 6;
     let temp = [];
-    for (let i = 0; i < icons.length; i++) {
+    for (let i = 0; i < iconTemplate.length; i++) {
         for (let j = 0; j < amountSelectable; j++) {
-            temp.push(icons[i]);
+            temp.push(iconTemplate[i]);
         }
     }
     icons = temp;
@@ -37,9 +70,9 @@ function shuffleCards() {
         icons[i] = icons[j];
         icons[j] = temp;
     }
- 
-    for (let i = 0; i < icons.length; i++) {
-        cards[i].querySelector(".card__item").textContent = icons[i];
+    
+    for(let i = 0; i < cards.length; i++){
+        cards[i].querySelector('.card__item').innerText = icons[i];
     }
  
     console.log(icons);
@@ -91,6 +124,7 @@ function checkForMatch() {
  
     return won;
 }
+ 
  
 // Utility Functions
 function getRandomInt(max) {

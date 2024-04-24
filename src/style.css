@@ -80,6 +80,9 @@ h6 {
   place-content: center;
 }
  
+.no-transition {
+  transition: none;
+}
  
 /* Main */
 main {
@@ -90,6 +93,15 @@ main {
   align-items: center;
 }
  
+ 
+/* information box */
+.information-box {
+  padding: 2rem 0;
+}
+.input-number {
+  width: 3rem;
+  margin-left: 1rem;
+}
  
 /* Memory Card Wrapper */
 #memory-card__wrapper {
