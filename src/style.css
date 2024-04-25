@@ -105,7 +105,6 @@ main {
  
 /* Memory Card Wrapper */
 #memory-card__wrapper {
-  border: 1px solid black;
   min-width: 2vw;
   max-width: 60vw;
   width: auto;

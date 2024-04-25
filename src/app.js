@@ -1,6 +1,6 @@
 //References
 let cards = [];
-let inputCards = document.querySelector("#input-number");
+let shuffleButton = document.querySelector("#input-number");
 let buttonShuffle = document.querySelector("#box__button");
 let cardsWrapper = document.querySelector("#memory-card__wrapper");
  
@@ -18,13 +18,17 @@ const fadeDelay = 1000;
 let cardTemplate = cardsWrapper.innerHTML;
 
 // Event Listeners
-buttonShuffle.addEventListener("click", generateCards);
+buttonShuffle.addEventListener("click", ()=> {
+    if (shuffleButton.value != amountOfCards) generateCards();
+    shuffleCards();
+});
  
  
 //Generate Cards
 function generateCards(){
-    amountOfCards = inputCards.value; //Input needs to be dividable by 6
-   
+    amountOfCards = shuffleButton.value; //Input needs to be dividable by 6
+    cards = [];
+
     createIconList();
 
     let parent = cardsWrapper;
@@ -47,8 +51,6 @@ function generateCards(){
         newElement.addEventListener("click", (event) => changeCardState(event));
         cards.push(newElement);
     }
-
-    shuffleCards();
 }
  
  
@@ -71,6 +73,7 @@ function shuffleCards() {
         icons[j] = temp;
     }
     
+    console.log(cards);
     for(let i = 0; i < cards.length; i++){
         cards[i].querySelector('.card__item').innerText = icons[i];
     }
