@@ -3,6 +3,7 @@ let cards = [];
 let shuffleButton = document.querySelector("#input-number");
 let buttonShuffle = document.querySelector("#box__button");
 let cardsWrapper = document.querySelector("#memory-card__wrapper");
+let scoreVisual = document.querySelector("#score");
  
 //Data
 let amountOfCards;
@@ -10,6 +11,9 @@ let amountSelectable;
 let selectedCards = [];
 let iconTemplate = ["😀", "😍", "😙", "😝", "😡", "🦇"] //This needs to be dynamically imported from an api so we dont have to use amount dividable by 6
 let icons;
+
+//Game Stats
+let score = 0;
  
 //Constants
 const fadeDelay = 1000;
@@ -22,12 +26,17 @@ buttonShuffle.addEventListener("click", ()=> {
     if (shuffleButton.value != amountOfCards) generateCards();
     shuffleCards();
 });
- 
+
+//In the beginning
+updateScore(0);
+
  
 //Generate Cards
 function generateCards(){
     amountOfCards = shuffleButton.value; //Input needs to be dividable by 6
+    
     cards = [];
+    score = 0;
 
     createIconList();
 
@@ -101,10 +110,12 @@ function changeCardState(e) {
 }
  
 function collectSelected() {
+    updateScore(1);
     for (let i = 0; i < selectedCards.length; i++) {
         selectedCards[i].dataset.state = "collected";
     }
     clearSelected(false);
+    console.log(score);
 }
  
 function clearSelected(visualHide) {
@@ -128,6 +139,10 @@ function checkForMatch() {
     return won;
 }
  
+function updateScore(added){
+    score += added;
+    scoreVisual.innerText = score;
+}
  
 // Utility Functions
 function getRandomInt(max) {
