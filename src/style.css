@@ -1,3 +1,4 @@
+
 /* Global Variables */
 :root {
   --wdth-card: 8rem;
@@ -106,7 +107,7 @@ main {
 /* Memory Card Wrapper */
 #memory-card__wrapper {
   min-width: 2vw;
-  max-width: 60vw;
+  max-width: 80vw;
   width: auto;
   height: auto;
  
