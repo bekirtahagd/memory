@@ -12,6 +12,7 @@ let buttonShuffle = document.querySelector("#shuffle__button");
 let cardsWrapper = document.querySelector("#memory-card__wrapper");
 let scoresVisual = document.querySelector("#scores");
 let playerVisual = document.querySelector("#player");
+let roundVisual = document.querySelector("#round");
  
 //Data
 let amountOfCards;
@@ -26,6 +27,7 @@ let scores = [];
 let sumScore = 0;
 let currentPlayerIndex = 0;
 let isGameFinished = false;
+let round = 1;
  
 //Constants
 const fadeDelay = 1000;
@@ -41,6 +43,7 @@ buttonShuffle.addEventListener("click", () => {
   else resetPlayers();
  
   isGameFinished = false;
+  generateRound();
   generatePlayers();
   shuffleCards();
 });
@@ -51,7 +54,17 @@ function hideCards() {
     card.dataset.state = "hidden";
   });
 }
- 
+
+
+function generateRound() {
+  round = 1;
+  roundVisual.innerText = round;
+}
+function updateRound(amount){
+  round += amount;
+  roundVisual.innerText = round;
+}
+
 function generateScores() {
   scores = [];
   sumScore = 0;
@@ -63,7 +76,6 @@ function generateScores() {
     //Visual
     scoresVisual.innerHTML +=
       "Player" + (i + 1) + ': <span id="score' + i + '">0</span><br>';
-    //console.log("Score Player" + (currentPlayerIndex + 1) + " " + scores[currentPlayerIndex]);
   }
 }
 function generatePlayers() {
@@ -79,6 +91,7 @@ function nextPlayer() {
     currentPlayerIndex++;
   } else {
     currentPlayerIndex = 0;
+    updateRound(1);
   }
  
   playerVisual.innerText = currentPlayerIndex + 1;
@@ -149,16 +162,17 @@ function selectCard(e) {
       selectedCards.push(e.target);
       e.target.dataset.state = "open";
  
-      //If player selected two cards, hide both
+      //If player selected two cards
       if (selectedCards.length == amountSelectable) {
-        if (!checkForMatch()) {
-          setTimeout(() => {
+        setTimeout(() => {
+          if (!checkForMatch()){
             clearSelected(true);
             nextPlayer();
-        }, fadeDelay);
-        } else {
-          setTimeout(collectSelected, fadeDelay);
-        }
+          } else {
+            collectSelected();
+          }
+          console.log(round);
+        }, fadeDelay)
       }
     }
   }
