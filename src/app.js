@@ -1,16 +1,13 @@
-/*  ***TODO***
-    -Code Organisation
-    -Commentating Code
-*/
- 
- 
+
+
 //Visual References
-let inputAmountCards = document.querySelector("#input-cards");
+let inputAmountPairs = document.querySelector("#input-cards");
 let inputAmountPlayers = document.querySelector("#input-player");
-let buttonShuffle = document.querySelector("#shuffle__button");
+let inputAmountSelectable = document.querySelector("#input-selectable");
 let cardsWrapper = document.querySelector("#memory-card__wrapper");
 let scoresWrapper = document.querySelector("#scores");
 let turnVisual = document.querySelector("#turn");
+let buttonShuffle = document.querySelector("#shuffle__button");
  
 //HTML References
 let cards = [];
@@ -22,7 +19,7 @@ let iconTemplate = ["😀", "😍", "😙", "😝", "😡", "🦇", "⚽️", "�
 let cardTemplate = cardsWrapper.innerHTML;
  
 //Settings
-let amountOfCards;
+let amountOfPairs;
 let amountSelectable;
 let amountofPlayers;
 let icons;
@@ -39,7 +36,7 @@ const fadeDelay = 1000;
 // Event Listeners
 buttonShuffle.addEventListener("click", () => {
   //If amount of cards changed, we need to print new Cards
-  if (inputAmountCards.value != amountOfCards || isGameFinished) generateCards();
+  if (inputAmountPairs.value != amountOfPairs || isGameFinished) generateCards();
   else hideCards();
  
   if(inputAmountPlayers.value != amountofPlayers) generatePlayers();
@@ -52,7 +49,8 @@ buttonShuffle.addEventListener("click", () => {
  
 // Cards
 function generateCards() {
-  amountOfCards = inputAmountCards.value;
+  amountOfPairs = inputAmountPairs.value;
+  amountSelectable = inputAmountSelectable.value;
  
   //Delete (selected) cards
   cards = [];
@@ -72,7 +70,7 @@ function generateCards() {
   cards.push(template);
  
   //Loop through cards and generate each one
-  for (let i = 0; i < amountOfCards - 1; i++) {
+  for (let i = 0; i < (amountOfPairs * amountSelectable) - 1; i++) {
     let newElement = document.createElement("div");
     newElement.classList.add("memory-card");
     newElement.dataset.state = "hidden";
@@ -120,14 +118,15 @@ function selectCard(e) {
  
       //TODO
       if (selectedCards.length == amountSelectable) {
-        if (!checkForMatch()) {
-          setTimeout(() => {
+        
+        setTimeout(() => {
+          if (!checkForMatch()){
             clearSelected(true);
             nextPlayer();
-        }, fadeDelay);
-        } else {
-          setTimeout(collectSelected, fadeDelay);
-        }
+          } else {
+            collectSelected();
+          }
+        }, fadeDelay)
       }
     }
   }
@@ -196,13 +195,12 @@ function resetTurn() {
 //Icon List
 function createIconList() {
   //temporary icon list equals template
-  let temp = iconTemplate;
+  let temp = shortenArray(iconTemplate, amountOfPairs);
+ 
  
   //if amount of cards smaller than iconTemplate, shorten icon template
-  if (amountOfCards / 2 < iconTemplate.length) temp = shortenArray(temp, (amountOfCards/2));
+  if (amountOfPairs > iconTemplate.length) console.error("Two many pairs");
  
-  //Calculate Amount Selectable
-  amountSelectable = amountOfCards / temp.length;
  
   //Create Icon List
   icons = [];
@@ -225,7 +223,7 @@ function collectSelected() {
   }
  
   //clear selected variable
-  clearSelected(false);
+  clearSelected();
  
   //if all cards are collected, player has won;
   if (hasPlayerWon()) {
@@ -279,7 +277,7 @@ function playerWon() {
 }
  
 function hasPlayerWon() {
-  return sumScore == amountOfCards / amountSelectable
+  return sumScore == amountOfPairs;
 }
  
  
@@ -325,3 +323,4 @@ function getHighestValueInArray(array){
 function shortenArray(array, length){
   return array.slice(0, length);
 }
+ 
