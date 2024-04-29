@@ -4,115 +4,74 @@
 */
  
  
-//References
-let cards = [];
+//Visual References
 let inputAmountCards = document.querySelector("#input-cards");
 let inputAmountPlayers = document.querySelector("#input-player");
 let buttonShuffle = document.querySelector("#shuffle__button");
 let cardsWrapper = document.querySelector("#memory-card__wrapper");
-let scoresVisual = document.querySelector("#scores");
-let playerVisual = document.querySelector("#player");
-let roundVisual = document.querySelector("#round");
+let scoresWrapper = document.querySelector("#scores");
+let turnVisual = document.querySelector("#turn");
  
-//Data
+//HTML References
+let cards = [];
+let selectedCards = [];
+let scores = [];
+ 
+//Templates
+let iconTemplate = ["😀", "😍", "😙", "😝", "😡", "🦇", "⚽️", "🏀", "🏈", "⚾️", "🥎", "🎾", "🏐", "🙀","👽", "👾", "🤖", "🎃"]; //This needs to be dynamically imported from an api so we dont have to use amount dividable by 6
+let cardTemplate = cardsWrapper.innerHTML;
+ 
+//Settings
 let amountOfCards;
 let amountSelectable;
-let selectedCards = [];
-let iconTemplate = ["😀", "😍", "😙", "😝", "😡", "🦇", "⚽️", "🏀", "🏈", "⚾️", "🥎", "🎾", "🏐", "🙀","👽", "👾", "🤖", "🎃"]; //This needs to be dynamically imported from an api so we dont have to use amount dividable by 6
+let amountofPlayers;
 let icons;
  
 //Game Stats
-let amountofPlayers;
-let scores = [];
-let sumScore = 0;
 let currentPlayerIndex = 0;
+let sumScore = 0;
 let isGameFinished = false;
-let round = 1;
  
 //Constants
 const fadeDelay = 1000;
  
-//Visual Data
-let cardTemplate = cardsWrapper.innerHTML;
  
 // Event Listeners
 buttonShuffle.addEventListener("click", () => {
+  //If amount of cards changed, we need to print new Cards
   if (inputAmountCards.value != amountOfCards || isGameFinished) generateCards();
   else hideCards();
+ 
   if(inputAmountPlayers.value != amountofPlayers) generatePlayers();
-  else resetPlayers();
+  else resetTurn();
  
   isGameFinished = false;
-  generateRound();
-  generatePlayers();
+  generateScores();
   shuffleCards();
 });
  
-//Generate Cards
-function hideCards() {
-  cards.forEach(card => {
-    card.dataset.state = "hidden";
-  });
-}
-
-
-function generateRound() {
-  round = 1;
-  roundVisual.innerText = round;
-}
-function updateRound(amount){
-  round += amount;
-  roundVisual.innerText = round;
-}
-
-function generateScores() {
-  scores = [];
-  sumScore = 0;
-  scoresVisual.innerHTML = "";
-  for (let i = 0; i < amountofPlayers; i++) {
-    //Variable
-    scores.push(0);
- 
-    //Visual
-    scoresVisual.innerHTML +=
-      "Player" + (i + 1) + ': <span id="score' + i + '">0</span><br>';
-  }
-}
-function generatePlayers() {
-  amountofPlayers = inputAmountPlayers.value;
-  generateScores();
-}
-function resetPlayers() {
-  currentPlayerIndex = 0;
-  playerVisual.textContent = 1;
-}
-function nextPlayer() {
-  if (currentPlayerIndex + 1 < amountofPlayers) {
-    currentPlayerIndex++;
-  } else {
-    currentPlayerIndex = 0;
-    updateRound(1);
-  }
- 
-  playerVisual.innerText = currentPlayerIndex + 1;
-}
- 
+// Cards
 function generateCards() {
-  amountOfCards = inputAmountCards.value; //Input needs to be dividable by 6
+  amountOfCards = inputAmountCards.value;
  
+  //Delete (selected) cards
   cards = [];
   clearSelected();
  
+  //Create Icon List in dependence of amount
   createIconList();
  
+  //Set first card  
   let parent = cardsWrapper;
   parent.innerHTML = cardTemplate;
  
+  //Get Template Variable
   let template = cardsWrapper.querySelector(".memory-card");
   template.addEventListener("click", (event) => selectCard(event));
   template.dataset.state = "hidden";
   cards.push(template);
  
+  //Loop through cards and generate each one
   for (let i = 0; i < amountOfCards - 1; i++) {
     let newElement = document.createElement("div");
     newElement.classList.add("memory-card");
@@ -126,14 +85,126 @@ function generateCards() {
   }
 }
  
+function hideCards() {
+  //loop through every card and hide it
+  cards.forEach(card => {
+    card.dataset.state = "hidden";
+  });
+}
+ 
+function shuffleCards() {
+  //Shuffle Algorithm
+  for (let i = icons.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = icons[i];
+    icons[i] = icons[j];
+    icons[j] = temp;
+  }
+ 
+  //Set Icons
+  for (let i = 0; i < cards.length; i++) {
+    cards[i].querySelector(".card__item").innerText = icons[i];
+  }
+}
+ 
+function selectCard(e) {
+  //If can select card
+  if (selectedCards.length < amountSelectable) {
+    //If is a hidden/clickable card
+    if (e.target.dataset.state === "hidden") {
+      //Add to selected cards
+      selectedCards.push(e.target);
+      e.target.dataset.state = "open";
+ 
+      //If player selected two cards, hide both
+ 
+      //TODO
+      if (selectedCards.length == amountSelectable) {
+        if (!checkForMatch()) {
+          setTimeout(() => {
+            clearSelected(true);
+            nextPlayer();
+        }, fadeDelay);
+        } else {
+          setTimeout(collectSelected, fadeDelay);
+        }
+      }
+    }
+  }
+}
+ 
+//Players
+function generatePlayers() {
+  //Players are only saved in the amount of players variable
+  amountofPlayers = inputAmountPlayers.value;
+}
+function nextPlayer() {
+  if (currentPlayerIndex + 1 < amountofPlayers) {
+    currentPlayerIndex++;
+  } else {
+    currentPlayerIndex = 0;
+  }
+ 
+  //Change Turn Visually
+  turnVisual.innerText = currentPlayerIndex + 1;
+}
+ 
+ 
+//Scores
+function generateScores() {
+  //reset scores
+  scores = [];
+  sumScore = 0;
+  scoresWrapper.innerHTML = "";
+ 
+  //Create new Score dependent on amount of Players
+  for (let i = 0; i < amountofPlayers; i++) {
+    //Variable
+    scores.push(0);
+ 
+    //Visual
+    scoresWrapper.innerHTML +=
+      "Player" + (i + 1) + ': <span id="score' + i + '">0</span><br>';
+  }
+}
+ 
+function addPlayerScore(added) {
+  scores[currentPlayerIndex] += added;
+  sumScore += added;
+ 
+  //Visually Update
+  scoresWrapper.querySelector("#score" + currentPlayerIndex).innerText =
+    scores[currentPlayerIndex];
+}
+ 
+function setPlayerScore(newScore) {
+  let cScore = scores[currentPlayerIndex]; //current score
+  let scoreDifference = newScore - cScore; //difference between new and old score
+ 
+  //Update score (sum)
+  sumScore += scoreDifference;
+  scores[currentPlayerIndex] = newScore;
+}
+ 
+ 
+//Turn
+function resetTurn() {
+  currentPlayerIndex = 0;
+  turnVisual.textContent = 1;
+}
+ 
+//Icon List
 function createIconList() {
+  //temporary icon list equals template
   let temp = iconTemplate;
  
+  //if amount of cards smaller than iconTemplate, shorten icon template
   if (amountOfCards / 2 < iconTemplate.length) temp = shortenArray(temp, (amountOfCards/2));
  
- 
+  //Calculate Amount Selectable
   amountSelectable = amountOfCards / temp.length;
  
+  //Create Icon List
   icons = [];
   temp.forEach(icon => {
     for (let i = 0; i < amountSelectable; i++) {
@@ -142,56 +213,25 @@ function createIconList() {
   });
 }
  
-function shuffleCards() {
-  for (let i = icons.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = icons[i];
-    icons[i] = icons[j];
-    icons[j] = temp;
-  }
  
-  for (let i = 0; i < cards.length; i++) {
-    cards[i].querySelector(".card__item").innerText = icons[i];
-  }
- 
-}
- 
-function selectCard(e) {
-  if (selectedCards.length < amountSelectable) {
-    if (e.target.dataset.state === "hidden") {
-      selectedCards.push(e.target);
-      e.target.dataset.state = "open";
- 
-      //If player selected two cards
-      if (selectedCards.length == amountSelectable) {
-        setTimeout(() => {
-          if (!checkForMatch()){
-            clearSelected(true);
-            nextPlayer();
-          } else {
-            collectSelected();
-          }
-          console.log(round);
-        }, fadeDelay)
-      }
-    }
-  }
-}
- 
+//Selected
 function collectSelected() {
-  updatePlayerScore(1);
+  //add score
+  addPlayerScore(1);
  
+  //collect
   for (let i = 0; i < selectedCards.length; i++) {
     selectedCards[i].dataset.state = "collected";
   }
  
+  //clear selected variable
   clearSelected(false);
  
-  if (sumScore == amountOfCards / amountSelectable) {
+  //if all cards are collected, player has won;
+  if (hasPlayerWon()) {
     playerWon();
   }
 }
- 
 function clearSelected(visualHide) {
   //Hide Cards and Clear Array
   for (let i = selectedCards.length - 1; i >= 0; i--) {
@@ -202,9 +242,13 @@ function clearSelected(visualHide) {
   }
 }
  
+ 
+ 
+//Data Processing
 function checkForMatch() {
   let won = true;
  
+  //loop through selected cards and check whether 2 cards always match with each other
   for (let i = 0; i < selectedCards.length - 1; i++) {
     if (selectedCards[i].textContent !== selectedCards[i + 1].textContent) {
       won = false;
@@ -212,25 +256,19 @@ function checkForMatch() {
     }
   }
  
+  //If all cards matched -> won = true
+ 
   return won;
 }
  
-function updatePlayerScore(added) {
-  scores[currentPlayerIndex] += added;
-  sumScore += added;
- 
-  //Visually Update
-  scoresVisual.querySelector("#score" + currentPlayerIndex).innerText =
-    scores[currentPlayerIndex];
-}
- 
 function playerWon() {
-  let message = "";
-  let winner = getIndexOfHighestValue(scores);
+  //Get winner  
+  let winner = getIndexOfHighestValue(scores); //Get Winner
  
   isGameFinished = true;
  
   //Check whether there was a tie
+  let message = "";
   if (winner == -1){
     message = "Oh. It looks like a tie!";
   } else {
@@ -240,8 +278,13 @@ function playerWon() {
   confirm(message);
 }
  
-// Utility Functions
+function hasPlayerWon() {
+  return sumScore == amountOfCards / amountSelectable
+}
  
+ 
+ 
+// Utility Functions
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
@@ -282,4 +325,3 @@ function getHighestValueInArray(array){
 function shortenArray(array, length){
   return array.slice(0, length);
 }
- 
