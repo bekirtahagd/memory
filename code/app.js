@@ -1,14 +1,13 @@
-
-
 //Visual References
-let inputAmountPairs = document.querySelector("#input-cards");
-let inputAmountPlayers = document.querySelector("#input-player");
-let inputAmountSelectable = document.querySelector("#input-selectable");
-let cardsWrapper = document.querySelector("#memory-card__wrapper");
-let scoresWrapper = document.querySelector("#scores");
+let inputAmountPairs = document.querySelector("#amountOfPairs");
+let inputAmountPlayers = document.querySelector("#amountOfPlayers");
+let inputAmountSelectable = document.querySelector("#pairSize");
+let cardsWrapper = document.querySelector(".cards__wrapper");
+let scoresWrapper = document.querySelector(".scores");
 let turnVisual = document.querySelector("#turn");
-let buttonShuffle = document.querySelector("#shuffle__button");
- 
+let buttonShuffle = document.querySelector("#start");
+
+
 //HTML References
 let cards = [];
 let selectedCards = [];
@@ -32,20 +31,28 @@ let isGameFinished = false;
 //Constants
 const fadeDelay = 1000;
  
- 
+
 // Event Listeners
 buttonShuffle.addEventListener("click", () => {
   //If amount of cards changed, we need to print new Cards
-  if (inputAmountPairs.value != amountOfPairs || isGameFinished) generateCards();
+  if (inputAmountPairs.value != amountOfPairs || inputAmountSelectable.value != amountSelectable || isGameFinished) generateCards();
   else hideCards();
- 
+
   if(inputAmountPlayers.value != amountofPlayers) generatePlayers();
   else resetTurn();
- 
+
+
   isGameFinished = false;
   generateScores();
   shuffleCards();
 });
+
+//Check that amount of pairs cant get higher than icon Template Lengt
+inputAmountPairs.addEventListener("change", (e) => {
+    if (inputAmountPairs.value > iconTemplate.length) {
+        inputAmountPairs.value = iconTemplate.length;
+    } 
+})
  
 // Cards
 function generateCards() {
@@ -64,7 +71,7 @@ function generateCards() {
   parent.innerHTML = cardTemplate;
  
   //Get Template Variable
-  let template = cardsWrapper.querySelector(".memory-card");
+  let template = cardsWrapper.querySelector(".card");
   template.addEventListener("click", (event) => selectCard(event));
   template.dataset.state = "hidden";
   cards.push(template);
@@ -72,7 +79,7 @@ function generateCards() {
   //Loop through cards and generate each one
   for (let i = 0; i < (amountOfPairs * amountSelectable) - 1; i++) {
     let newElement = document.createElement("div");
-    newElement.classList.add("memory-card");
+    newElement.classList.add("card");
     newElement.dataset.state = "hidden";
     newElement.innerHTML = template.innerHTML;
  
@@ -163,7 +170,7 @@ function generateScores() {
  
     //Visual
     scoresWrapper.innerHTML +=
-      "Player" + (i + 1) + ': <span id="score' + i + '">0</span><br>';
+      (i + 1) + '. Player: <span id="score' + i + '">0</span><br>';
   }
 }
  
