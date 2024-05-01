@@ -163,7 +163,7 @@ function generateScores() {
  
     //Visual
     scoresWrapper.innerHTML +=
-      "Player" + (i + 1) + ': <span id="score' + i + '">0</span><br>';
+      (i + 1) + '. Player: <span id="score' + i + '">0</span><br>';
   }
 }
  
