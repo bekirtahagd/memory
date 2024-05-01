@@ -43,7 +43,7 @@
       4. Improve text rendering
     */
 body {
-  width: 100vw;
+  width: 99vw;
   max-width: 100vw;
   min-height: 100vh;
   line-height: 1.5;
@@ -157,7 +157,7 @@ main {
   width: 100%;
   height: calc(100vh - var(--height-header));
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr;
   justify-items: center;
 }
 
@@ -216,6 +216,7 @@ main {
 
 /* Score Box */
 .score-box {
+  text-wrap: nowrap;
   align-self: center;
 
   color: #ffffff;
@@ -232,7 +233,7 @@ main {
 
 /* Turn */
 .turn-box {
-  padding: 10% 20%;
+  padding: 5% 20%;
   text-align: center;
 }
 
@@ -243,3 +244,14 @@ main {
   font-size: var(--fs-turn);
 }
 
+
+@media (max-width: 950px) {
+  main {
+    grid-template-columns: 0.2fr 3fr 1fr;
+
+  }
+  .right-section{
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+  }
+}
