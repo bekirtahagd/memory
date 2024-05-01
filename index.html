@@ -5,36 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Memory</title>
  
-    <!-- CSS -->
-    <link rel="stylesheet" href="src/style.css" />
+    <link rel="stylesheet" href="./styling/general.css">
+    <link rel="stylesheet" href="./styling/cards.css">
+    <link rel="stylesheet" href="./styling/toggle-switch.css">
+    <link rel="stylesheet" href="./styling/button.css">
   </head>
   <body>
-    <body>
-      <main>
-        <div class="information-box">
-          Player Turn: <span id="turn">1</span> <br><br>
-          <span id="scores"></span> <br>
-          Anzahl Spieler <input type="number" id="input-player" name="anzahl_karten">
-          Anzahl Paare <input type="number" id="input-cards" name="anzahl_karten">
-          Anzahl Selectable <input type="number" id="input-selectable" name="anzahl_karten">
-          <a id="shuffle__button">Shuffle</a>
+    <header>
+      <div class="logo">
+        <h1 class="logo__text">Memorie</h1>
+      </div>
+     
+      <div class="gamemode__box">
+          <p class="gamemode__text">Singleplayer</p>
+          <label class="toggle">
+            <input id="toggleswitch" type="checkbox">
+            <span class="roundbutton"></span>
+          </label>
+      </div>
+    </header>
+ 
+    <!-- 3 Section Grid  -->
+    <main>
+        <div class="middle-section">
+            <div class="data-box">
+                <div class="input-wrapper">
+                    <div class="input-box">
+                        <p class="input__label">Players</p>
+                        <input type="number" class="input single-digit-input" id="amountOfPlayers" min="2" value="2" onkeypress="this.style.width = ((this.value.length + 1) * 16) + 'px';">
+                    </div>
+                    <div class="input-box">
+                        <p class="input__label">Pairs</p>
+                        <input type="number" class="input single-digit-input" id="amountOfPairs" min="2" max="5" value="2" onkeypress="this.style.width = ((this.value.length + 1) * 16) + 'px';">
+                    </div>
+                    <div class="input-box">
+                        <p class="input__label">Pair Size</p>
+                        <input type="number" class="input single-digit-input" id="pairSize" min="2" value="2" onkeypress="this.style.width = ((this.value.length + 1) * 16) + 'px';">
+                    </div>   
+                </div>
+                
+                <button class="custom-btn btn-3" id="start"><span>Start Game</span></button>
+            </div>
+            <div class="cards__wrapper">
+              <div class="card" data-state="collected" data-anim="no-anim">
+                <div class="card__item-wrapper">
+                  <p class="card__item"></p>
+                </div>
+                <div class="card__cover">
+                  <img src="" alt="" class="card__cover-image" />
+                </div>
+              </div>
+            </div>
+        </div>
+        
+        <div class="right-section">
+            <div class="score-box">
+              <p class="score__header">Scores:</p>
+              <div class="scores">
+                Player1: <span id="score1">0</span><br>
+                Player1: <span id="score1">0</span><br>
+                Player1: <span id="score1">0</span><br>
+              </div>
+            </div>
+            <div class="turn-box">
+              <p class="turn__header">Turn:</p>
+              <p id="turn">2</p>
+            </div>
         </div>
  
-        <div id="memory-card__wrapper">
-          <div class="memory-card" data-state="collected" data-anim="no-anim">
-            <div class="card__item-wrapper">
-              <p class="card__item"></p>
-            </div>
-            <div class="card__cover">
-              <img src="" alt="" class="card__cover-image" />
-            </div>
-          </div>
-        </div>
-      </main>
+        
+    </main>
  
-      <!-- Javascript -->
-      <script src="src/app.js"></script>
-    </body>
+    <script src="code/app.js" type="module"></script>
   </body>
 </html>
  
