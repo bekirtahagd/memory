@@ -17,5 +17,5 @@
   
 <h2>Project Screenshots:</h2>
 
-<img src="./preview/image.png" alt="project-screenshot" width=auto height="500/">
+<img src="./preview/main-page.png" alt="project-screenshot" width=auto height="500/">
 <img src="./preview/main-page-clicked.png" alt="project-screenshot" width=auto height="500/">
